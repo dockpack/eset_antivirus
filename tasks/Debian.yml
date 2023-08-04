@@ -1,0 +1,19 @@
+---
+- name: Ubuntu install
+  block:
+    - name: Find DEB package to install
+      ansible.builtin.find:
+        paths: "{{ eset_tmp_dir }}"
+        patterns: "*.deb"
+      register: eset_debian
+    - name: Install DEB package
+      become: true
+      ansible.builtin.apt:
+        update_cache: true
+        deb: "{{ eset_debian.files[0].path }}"
+    - name: Cleanup
+      ansible.builtin.file:
+        path: "{{ eset_debian.files[0].path }}"
+        state: absent
+  when:
+    - "'eea' not in ansible_facts.packages"

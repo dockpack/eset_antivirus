@@ -1,0 +1,21 @@
+---
+- name: RedHat install
+  block:
+    - name: Find RPM package to install
+      ansible.builtin.find:
+        paths: "{{ eset_tmp_dir }}"
+        patterns: "*.rpm"
+      register: eset_redhat
+    - name: Install RPM package
+      become: true
+      ansible.builtin.yum:
+        name:
+          - "{{ eset_redhat.files[0].path }}"
+        state: present
+        disable_gpg_check: true
+    - name: Cleanup
+      ansible.builtin.file:
+        path: "{{ eset_redhat.files[0].path }}"
+        state: absent
+  when:
+    - "'eea' not in ansible_facts.packages"

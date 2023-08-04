@@ -1,0 +1,12 @@
+---
+- name: Verify
+  hosts: all
+  become: true
+  vars:
+    this_role: "{{ lookup('env', 'MOLECULE_PROJECT_DIRECTORY') | basename }}"
+
+  tasks:
+    - name: "Include {{ this_role }}"
+      ansible.builtin.include_role:
+        name: "{{ this_role }}"
+        tasks_from: verify

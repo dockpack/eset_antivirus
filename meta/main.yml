@@ -1,7 +1,7 @@
 ---
 galaxy_info:
   role_name: eset_antivirus
-  namespace:  dockpack
+  namespace: dockpack
   author: Bas Meijer
   description: Install ESET Antivirus
 
@@ -17,7 +17,6 @@ galaxy_info:
     - name: Ubuntu
       versions:
         - "Focal"
-        - "Bionic"
   galaxy_tags:
     - system
     - security

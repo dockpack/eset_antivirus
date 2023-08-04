@@ -1,0 +1,8 @@
+---
+- name: Gather package facts
+  ansible.builtin.package_facts:
+
+- name: Verify package is installed
+  ansible.builtin.assert:
+    that:
+      - "'eea' in ansible_facts.packages"

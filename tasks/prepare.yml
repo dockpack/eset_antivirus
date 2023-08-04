@@ -1,0 +1,16 @@
+---
+
+- name: Install required packages
+  when:
+    - ansible_os_family == 'RedHat'
+    - ansible_distribution_major_version|int >= 8
+  ansible.builtin.yum:
+    name:
+      - glibc-locale-source
+      - glibc-langpack-en
+      - gzip
+    state: present
+
+- name: Set locale
+  ansible.builtin.command: localedef -c -f UTF-8 -i en_US en_US.UTF-8
+  changed_when: false

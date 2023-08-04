@@ -1,4 +1,6 @@
 ---
+desired_state: present
 # ESET AntiVirus
 eset_installer: eeau.x86_64.bin
 eset_url: "https://download.eset.com/com/eset/apps/business/eea/linux/g2/latest/{{ eset_installer }}"
+eset_tmp_dir: /var/tmp
