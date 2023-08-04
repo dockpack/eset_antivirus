@@ -1,0 +1,26 @@
+---
+galaxy_info:
+  role_name: eset_antivirus
+  namespace:  dockpack
+  author: Bas Meijer
+  description: Install ESET Antivirus
+
+  license: MIT
+
+  min_ansible_version: "2.13.0"
+
+  platforms:
+    - name: EL
+      versions:
+        - "7"
+        - "8"
+    - name: Ubuntu
+      versions:
+        - "Focal"
+        - "Bionic"
+  galaxy_tags:
+    - system
+    - security
+    - hardening
+
+dependencies: []

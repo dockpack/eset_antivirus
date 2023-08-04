@@ -1,0 +1,65 @@
+- name: Check download
+  delegate_to: localhost
+  connection: local
+  run_once: true
+  ansible.builtin.stat:
+    path: "~/{{ eset_installer }}"
+  register: eset_download
+
+- name: Download ESET Antivirus
+  when: not eset_download.stat.exists
+  delegate_to: localhost
+  connection: local
+  run_once: true
+  ansible.builtin.get_url:
+    url: "{{ eset_url }}"
+    dest: ~/
+    mode: '0700'
+
+- name: Copy product bin package
+  ansible.builtin.copy:
+    src: "~/{{ eset_installer }}"
+    dest: "~/{{ eset_installer }}"
+    mode: '0700'
+
+- name: Unpack product bin package
+  ansible.builtin.command: "bash ./{{ eset_installer }} -y -f -n"
+  changed_when: true
+
+- name: Get the rpm or apt package facts
+  ansible.builtin.package_facts:
+  no_log: true
+
+- name: Set package type
+  ansible.builtin.set_fact:
+    eset_package_type: "{% if 'rpm' in ansible_facts.packages %}rpm{% else %}deb{% endif %}"
+    eset_remove_type: "{% if 'rpm' in ansible_facts.packages %}deb{% else %}rpm{% endif %}"
+
+- name: Find package to install
+  ansible.builtin.find:
+    paths: ~/
+    patterns: "*.{{ eset_package_type }}"
+  register: eset_package
+
+- name: Find package to remove
+  ansible.builtin.find:
+    paths: ~/
+    patterns: "*.{{ eset_remove_type }}"
+  register: eset_remove
+
+- name: Install package
+  become: true
+  ansible.builtin.dnf:
+    name:
+      - "{{ eset_package.files[0].path }}"
+    state: present
+    disable_gpg_check: true
+
+- name: Cleanup
+  ansible.builtin.file:
+    path:  "{{ item }}"
+    state: absent
+  loop:
+    - "~/{{ eset_installer }}"
+    - "{{ eset_remove.files[0].path }}"
+    #- "{{ eset_package.files[0].path }}"
