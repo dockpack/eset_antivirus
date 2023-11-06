@@ -1,4 +1,4 @@
 ---
 # present and absent are values for desired_state
-- name: Desired state connfiguration
+- name: Desired state configuration
   include_tasks: "{{ desired_state }}.yml"
