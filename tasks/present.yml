@@ -1,4 +1,7 @@
 ---
+- name: Gather package facts
+  ansible.builtin.package_facts:
+
 - name: Check download
   delegate_to: localhost
   connection: local
@@ -17,9 +20,6 @@
     url: "{{ eset_url }}"
     dest: "{{ eset_tmp_dir }}"
     mode: '0755'
-
-- name: Gather package facts
-  ansible.builtin.package_facts:
 
 - name: Transfer package
   block:
