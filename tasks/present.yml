@@ -11,11 +11,12 @@
   when: not eset_download.stat.exists
   delegate_to: localhost
   connection: local
+  become: false
   run_once: true
   ansible.builtin.get_url:
     url: "{{ eset_url }}"
     dest: "{{ eset_tmp_dir }}"
-    mode: '0700'
+    mode: '0755'
 
 - name: Gather package facts
   ansible.builtin.package_facts:
