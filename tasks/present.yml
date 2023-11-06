@@ -1,38 +1,40 @@
 ---
+- name: Gather package facts
+  ansible.builtin.package_facts:
+
 - name: Check download
   delegate_to: localhost
   connection: local
   run_once: true
   ansible.builtin.stat:
-    path: "{{ eset_tmp_dir }}/{{ eset_installer }}"
+    path: "{{ eset_download_dir }}/{{ eset_installer }}"
   register: eset_download
 
 - name: Download ESET Antivirus
   when: not eset_download.stat.exists
   delegate_to: localhost
   connection: local
+  become: false
   run_once: true
   ansible.builtin.get_url:
     url: "{{ eset_url }}"
-    dest: "{{ eset_tmp_dir }}"
-    mode: '0700'
-
-- name: Gather package facts
-  ansible.builtin.package_facts:
+    dest: "{{ eset_download_dir }}"
+    mode: '0755'
 
 - name: Transfer package
+  when: "'eea' not in ansible_facts.packages"
   block:
     - name: Copy product bin package
       ansible.builtin.copy:
-        src: "{{ eset_tmp_dir }}/{{ eset_installer }}"
+        src: "{{ eset_download_dir }}/{{ eset_installer }}"
         dest: "{{ eset_tmp_dir }}/{{ eset_installer }}"
         mode: '0700'
+
     - name: Unpack product bin package
       ansible.builtin.command: "bash {{ eset_tmp_dir }}/{{ eset_installer }} -y -f -n"
       args:
         chdir: "{{ eset_tmp_dir }}"
       changed_when: true
-  when: "'eea' not in ansible_facts.packages"
 
 - name: "Configure {{ ansible_os_family }}"
   include_tasks: "{{ ansible_os_family }}.yml"
